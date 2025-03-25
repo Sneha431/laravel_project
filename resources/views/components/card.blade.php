@@ -44,7 +44,8 @@ Allows passing extra attributes dynamically.
   <div class="card-div" @style(["font-size :" . $fontSize, "font-weight :" . $fontWeight])>
    <div {{$title->attributes->class("card-header")}}>
     {{-- {{dump($title->attributes)}}  --}}
-    {{$title}}
+{{$title}}
+    {{-- {{dump($title)}} --}}
    </div>
   </div>
   {{$color}}

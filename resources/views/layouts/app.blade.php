@@ -1,26 +1,13 @@
+@props(["title" => "","footerLinks"=>""])
+{{-- <x-base-layout :title="$title"> --}}
+  <x-base-layout :$title>
+<x-layouts.header></x-layouts.header>
 
-    @extends("layouts.clean")
-    
-   
-@section("childContent")
-       @include("layouts.partials.header")
+{{$slot}}
+{{-- <footer>
+<a href="#">Link 1</a>
+  <a href="#">Link 2</a>
+  {{$footerLinks}}
+</footer> --}}
 
-            @yield("content")
-                <footer>
-                    {{-- @yield("footerlinks") --}}
-                    @section("footerlinks")
-
-                                                        <a href="#">Link 1</a>
-                                                        <a href="#">Link 2</a>
-                        {{-- show both ends and outputs the section immediately. --}}
-                                                   @show
-
-                                                </footer>
-                    @endsection
-   
-
-
-
-  
-
-
+</x-base-layout>
