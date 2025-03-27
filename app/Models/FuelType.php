@@ -24,6 +24,5 @@ class FuelType extends Model
     //Disables the updated_at column. Laravel will no longer automatically update this field.
     public $timestamps = false;
     // Disables both created_at and updated_at. Laravel will not handle timestamps for this model.
-
-
+    protected $fillable = ["name"];
 }
