@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Car;
+use App\Models\CarFeatures;
+use App\Models\CarImage;
+use App\Models\CarType;
 use App\Models\FuelType;
 use App\Models\Maker;
 use Illuminate\Http\Request;
@@ -28,7 +31,7 @@ class HomeController extends Controller
         // ->where("user_id", 1)
         // ->limit(2)->get();
         // dd(//$car);
-        $car = new Car();
+        // $car = new Car();
         // $car->maker_id = 1;
         // $car->model_id = 1;
         // $car->year = 1900;
@@ -43,22 +46,22 @@ class HomeController extends Controller
         // $car->phone = "123";
         // $car->description = null;
         // $car->published_at = now();
-        $cardata = [
-            "maker_id" => 1,
-            "model_id" => 1,
-            "year" => 2014,
-            "price" => 40000000,
-            "vin" => '999',
-            "mileage" => 8000,
-            "car_type_id" => 1,
-            "fuel_type_id" => 1,
-            "user_id" => 1,
-            "city_id" => 1,
-            "address" => "Lorem Ipsum",
-            "phone" => "123",
-            "description" => null,
-            "published_at" => now()
-        ];
+        // $cardata = [
+        //     "maker_id" => 1,
+        //     "model_id" => 1,
+        //     "year" => 2014,
+        //     "price" => 40000000,
+        //     "vin" => '999',
+        //     "mileage" => 8000,
+        //     "car_type_id" => 1,
+        //     "fuel_type_id" => 1,
+        //     "user_id" => 1,
+        //     "city_id" => 1,
+        //     "address" => "Lorem Ipsum",
+        //     "phone" => "123",
+        //     "description" => null,
+        //     "published_at" => now()
+        // ];
         //Approach1
         // $car = Car::create($cardata);
         //Approach 2
@@ -116,7 +119,101 @@ class HomeController extends Controller
         // FuelType::create(["name" => "Biodiesel"]);
 
         //Car::where("id", 1)->where("user_id", 1)->update(["price" => 15000]);
-        Car::where("year", "<", 2020)->delete();
+        //Car::where("year", "<", 2020)->delete();
+
+
+        // $car = Car::find(2);
+        // dd($car->features, $car->primaryImage);
+
+        //Update abs to 0 for car id 3 in features table
+        //One to One relationship
+        // $car = Car::find(3);
+        // $car->features()->abs = 0;
+        // $car->save();
+
+        //Update power_windows to 1 for car id 1 in features table
+        //One to One relationship
+        // $car = Car::find(1);
+        // $car->features->update(["power_windows" => 1]);
+
+
+        //Delete the car image row with car id 2
+        //One to One relationship
+        // $car = Car::find(2);
+        // $car->primaryImage->delete();
+
+        //Create car features row with car id 9 and with the below features
+        //One to One relationship
+        // $car = Car::find(id: 9);
+        // $carfeatures = new CarFeatures([
+
+        //     "abs" => false,
+        //     "air_conditioning" => false,
+        //     "power_windows" => false,
+        //     "power_door_locks" => false,
+        //     "cruise_control" => false,
+        //     "bluetooth_connectivity" => false,
+        //     "remote_start" => false,
+        //     "gps_navigation" => false,
+        //     "heater_seats" => false,
+        //     "climate_control" => false,
+        //     "rear_parking_sensors" => false,
+        //     "leather_seats" => false
+        // ]);
+        //   $car->features()->save($carfeatures);
+        //  dd($car->images);
+
+        //Create car image new row with car_id 1 and the below data
+        //One to Many relationship
+        //one car id with many image path
+        // $car = Car::find(1);
+        // $image = new CarImage(["image_path" => "test1", "position" => 10]);
+        // $car->images()->save($image);
+
+        //Create car image new row with car_id 1 and the below data
+        //One to Many relationship
+        //one car id with many image path
+        // $car = Car::find(1);
+        // $car->images()->create(["image_path" => "test1", "position" => 11]);
+
+
+        //Create many car images new row with car_id 1 and the below data
+        //One to Many relationship
+        // $car = Car::find(1);
+        // $car->images()
+        //     ->saveMany(
+        //         [
+        //             new CarImage(["image_path" => "test1", "position" => 13]),
+        //             new CarImage(["image_path" => "test1", "position" => 14])
+        //         ]
+        //     );
+        // $car->images()
+        //     ->createMany([
+        //         ["image_path" => "test1", "position" => 15],
+        //         ["image_path" => "test1", "position" => 16]
+        //     ]);
+
+
+        //Many to one relationship
+
+        // $car = Car::find(1);
+        // dd($car->carType);
+
+        // $carType = CarType::where('name', 'Sedan')->first();
+        //  dd($carType->cars);
+        // $cars = Car::whereBelongsTo($carType)->get();
+        // dd($cars);
+
+        $car = Car::find(1);
+        $carType = CarType::where('name', 'SUV')->first();
+        // $car->car_type_id = $carType->id;
+        //This line sets the car_type_id attribute of the $car instance to the id of the $carType instance. 
+        //This establishes the relationship between the Car and its CarType.
+        // $car->save();
+
+        $car->carType()->associate($carType);
+        //sets the car_type_id foreign key on the Car model to the ID of the retrieved CarType.
+        $car->save();
         return view("home.index");
     }
 }
