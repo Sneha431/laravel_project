@@ -73,4 +73,27 @@ class Car extends Model
             "user_id" // Foreign key on the pivot table referencing the related model
         );
     }
+
+    public function fuelType(): BelongsTo
+    {
+        return $this->belongsTo(FuelType::class);
+    }
+
+
+    public function maker(): BelongsTo
+    {
+        return $this->belongsTo(Maker::class);
+    }
+    public function model(): BelongsTo
+    {
+        return $this->belongsTo(Model::class);
+    }
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+    public function city(): BelongsTo
+    {
+        return $this->belongsTo(City::class);
+    }
 }

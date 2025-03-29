@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -62,5 +63,9 @@ class User extends Authenticatable
             'user_id',         // Foreign key on the pivot table referencing the current model
             'car_id'           // Foreign key on the pivot table referencing the related model
         );
+    }
+    public function cars(): HasMany
+    {
+        return $this->hasMany(Car::class);
     }
 }

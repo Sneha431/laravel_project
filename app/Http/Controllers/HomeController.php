@@ -233,6 +233,7 @@ class HomeController extends Controller
         //favourite_cars table
         // $user = User::find(1);
         // $user->favouredCars()->detach([3, 4]);
+        //$user->favouredCars()->detach();//this will detach all record ..dont depend on id
 
         //it will insert cars with id 3 and 4 in 2 rows with having user id 1 in 
         //favourite_cars table
