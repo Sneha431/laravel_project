@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -46,5 +47,20 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    public function favouredCars()
+    {
+        // return $this->belongsToMany(
+        //     Car::class,        // Related model
+        //     'favourite_cars',  // Pivot table
+        //     'user_id',         // Foreign key on the pivot table referencing the current model
+        //     'car_id'           // Foreign key on the pivot table referencing the related model
+        // )->withTimestamps();
+        return $this->belongsToMany(
+            Car::class,        // Related model
+            'favourite_cars',  // Pivot table
+            'user_id',         // Foreign key on the pivot table referencing the current model
+            'car_id'           // Foreign key on the pivot table referencing the related model
+        );
     }
 }

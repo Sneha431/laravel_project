@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Car extends Model
 {
@@ -62,5 +63,14 @@ class Car extends Model
         //The belongsTo() method in Laravel defines a one-to-many (inverse) relationship between two models. 
         //It is used when a child model (Car) references a parent model (CarType) through a foreign key.
         return $this->belongsTo(CarType::class);
+    }
+    public function favouredUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class, // Related model
+            'favourite_cars', // Pivot table
+            'car_id', // Foreign key on the pivot table referencing the current model
+            "user_id" // Foreign key on the pivot table referencing the related model
+        );
     }
 }

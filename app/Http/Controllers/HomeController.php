@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Car;
+use App\Models\User;
 use App\Models\CarFeatures;
 use App\Models\CarImage;
 use App\Models\CarType;
@@ -204,16 +205,50 @@ class HomeController extends Controller
         // $cars = Car::whereBelongsTo($carType)->get();
         // dd($cars);
 
-        $car = Car::find(1);
-        $carType = CarType::where('name', 'SUV')->first();
+        // $car = Car::find(1);
+        // $carType = CarType::where('name', 'SUV')->first();
         // $car->car_type_id = $carType->id;
         //This line sets the car_type_id attribute of the $car instance to the id of the $carType instance. 
         //This establishes the relationship between the Car and its CarType.
         // $car->save();
 
-        $car->carType()->associate($carType);
+        // $car = Car::find(1);
+        // $carType = CarType::where('name', 'SUV')->first();
+        //$car->carType()->associate($carType);
         //sets the car_type_id foreign key on the Car model to the ID of the retrieved CarType.
-        $car->save();
+        // $car->save();
+
+        //Many to many relationship
+        // $car = Car::find(1);
+        // dd($car->favouredUsers);
+        // $user = User::find(1);
+        // dd($user->favouredCars);
+
+        //it will insert cars with id 1 and 2 in 2 rows with having user id 1 in 
+        //favourite_cars table
+        $user = User::find(1);
+        $user->favouredCars()->attach([1, 2]);
+
+        //it will delete cars with id 1 and 2 in 2 rows with having user id 1 in 
+        //favourite_cars table
+        // $user = User::find(1);
+        // $user->favouredCars()->detach([3, 4]);
+
+        //it will insert cars with id 3 and 4 in 2 rows with having user id 1 in 
+        //favourite_cars table
+        //but before inserting it will delete the existing table data which is present
+        // $user = User::find(1);
+        // $user->favouredCars()->sync([3, 4]);
+
+        //   If you have a User model related to a Car model through a pivot table (e.g., favoured_cars), and you want to synchronize the user's favored cars while attaching additional data, you can use syncWithPivotValues as follows:
+
+
+
+        // $user = User::find(1);
+        // $user->favouredCars()->syncWithPivotValues([9, 10], ['added_on' => now()]);
+        //The user with ID 1 will be associated with the cars having IDs 9 and 10.
+        //Each association will have an added_on field in the pivot table set to the current timestamp.
+        //Any existing associations not included in the [9, 10] array will be removed due to the default behavior of syncWithPivotValues.
         return view("home.index");
     }
 }
