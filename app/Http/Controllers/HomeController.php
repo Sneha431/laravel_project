@@ -250,6 +250,19 @@ class HomeController extends Controller
         //The user with ID 1 will be associated with the cars having IDs 9 and 10.
         //Each association will have an added_on field in the pivot table set to the current timestamp.
         //Any existing associations not included in the [9, 10] array will be removed due to the default behavior of syncWithPivotValues.
+        // $maker = Maker::factory()->make();
+        //make() simply returns the model instance.
+        //factories provide a convenient way to generate new model instances for testing and seeding purposes.
+
+
+        // $maker = Maker::factory()->create();
+        //In Laravel, the create() method serves as a convenient way to instantiate and persist new records in the database for a given Eloquent model. 
+        //it create temp fake name with auto inc id in maker table
+
+
+        $maker = Maker::factory()->count(10)->create();
+        //This method specifies that 10 instances of the Maker model should be created. Without this, the factory would default to creating a single instance.
+        dd($maker);
         return view("home.index");
     }
 }

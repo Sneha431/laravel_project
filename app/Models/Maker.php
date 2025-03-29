@@ -21,4 +21,8 @@ class Maker extends Model
     {
         return $this->belongsTo(Model::class);
     }
+    // protected static function newFactory()
+    // {
+    //     return CarMakerFactory::new();
+    // }
 }
