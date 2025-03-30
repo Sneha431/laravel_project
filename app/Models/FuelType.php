@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model as EloquentModel;
 
-class FuelType extends Model
+class FuelType extends EloquentModel
 {
     //`use HasFactory;` enables Laravel factories for generating test data, 
     //simplifying database seeding and testing.

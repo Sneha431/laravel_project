@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use App\Models\Car;
 use App\Models\User;
 use App\Models\CarFeatures;
@@ -9,6 +10,7 @@ use App\Models\CarImage;
 use App\Models\CarType;
 use App\Models\FuelType;
 use App\Models\Maker;
+use App\Models\Model;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -226,8 +228,8 @@ class HomeController extends Controller
 
         //it will insert cars with id 1 and 2 in 2 rows with having user id 1 in 
         //favourite_cars table
-        $user = User::find(1);
-        $user->favouredCars()->attach([1, 2]);
+        // $user = User::find(1);
+        // $user->favouredCars()->attach([1, 2]);
 
         //it will delete cars with id 1 and 2 in 2 rows with having user id 1 in 
         //favourite_cars table
@@ -260,9 +262,90 @@ class HomeController extends Controller
         //it create temp fake name with auto inc id in maker table
 
 
-        $maker = Maker::factory()->count(10)->create();
+        // $maker = Maker::factory()->count(10)->create();
         //This method specifies that 10 instances of the Maker model should be created. Without this, the factory would default to creating a single instance.
-        dd($maker);
+        //dd($maker);
+
+        // User::factory()->count(5)->create([
+        //     "name" => "Zua"
+        // ]);
+        //explain
+        //User::factory(): Initializes a new factory instance for the User model.
+        //->count(5): Specifies that five instances should be created.
+        //->create(['name' => 'Zua']): Overrides the default name attribute defined in the factory with "Zua" and persists each instance to the database.
+
+        // $users = User::factory()->count(5)->state([
+        //     "name" => "Zua"
+        // ])->make();
+        // dd($users);
+        //This code generates five `User` model instances with the `name` attribute set to "Zua" without saving them to the database,
+        // then outputs the collection of these instances using the `dd` (dump and die) function. 
+        //the state() method allows you to define specific attribute modifications for generated model instances. 
+        // User::factory()->count(6)->sequence(
+        //     ["name" => "Zua"],
+        //     ["name" => "Joe"],
+        //     ["name" => "Joseph"],
+        //     ["name" => "Alen"],
+        //     ["name" => "Tom"],
+        //     ["name" => "Azam"]
+        // )
+        //     ->create();
+        //Creates 6 user records Each record gets a name from the sequence in order
+        //After the last value, it does not repeat (unless count is greater than sequence values, then it loops)
+        // Other attributes are still generated randomly unless explicitly defined
+        //This ensures that the first user will have "Zua", the second "Joe", and so on,
+        //rather than all users having the same name.
+
+
+        // User::factory()->count(10)
+        //     ->sequence(fn(Sequence $sequence) => ['name' => 'Name ' . $sequence->index])
+        //     ->create();
+        //dynamically generates values based on the sequence index.
+        // The $sequence->index represents the current index in the sequence.
+        //It starts at 0 and increments for each new record. 
+        //This dynamically assigns unique values instead of hardcoding them.
+        //it creates 10 record in table with name 0 ...name 9 and other fields as mentioned
+        //in userfactory ,in that format all fields will be generate with fake data
+
+        // $user = User::withTrashed()->find(1);
+
+        // if ($user->trashed()) {
+        //     echo "User is soft deleted.";
+        // } else {
+        //     echo "User is active.";
+        // }
+        //withTrashed() allows retrieving soft-deleted records.
+        //trashed() checks if the deleted_at column is not null (i.e., the record is soft deleted).
+        //we dont have delete_at so can't execute this
+
+        // User::factory()->count(11)->state(["email_verified_at" => null])->create();
+        //It generates 11 fake user records from userfactory where their email is unverified i.e. null.
+
+        //User::factory()->count(11)->unverified()->create();
+        //It generates 11 fake user records from userfactory where their email is unverified i.e. null.
+
+        //User::factory()->count(11)->create();
+
+
+        //one to many factory relationship
+        //Maker::factory()->count(5)->hasModels(5)->create();
+        //here hasModels [ Models is the func name models() in maker models with first letter caps]
+        //create 5 makers with fake name in maker table
+        //create 25 models with 5 maker id (from maker table )in model table 
+
+        // Maker::factory()->count(2)->hasModels(2, ["name" => "Test"])->create();
+        //it will make 4 model with name test and with 2 maker id( 2 maker id will inserted to maker table)
+
+        // Maker::factory()->count(1)
+        //     ->has(Model::factory()->count(1), 'carModels')->create();
+        //if relation or func name is not same as model name in plural i.e. models then we 
+        //have to mention the full func name is second param
+        Maker::factory()->count(1)
+            ->has(Model::factory()->count(1))->create();
+        //create 3 models with fake name from modelfactory and with ,maker id unique which is 
+        //created in maker table (only 1 maker is created)
+        //if relation or func name is  same as model name in plural i.e. models then we 
+        //have not to mention the full func name is second param
         return view("home.index");
     }
 }
