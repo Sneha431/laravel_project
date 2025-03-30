@@ -18,7 +18,7 @@ class Model extends EloquentModel
     {
         return $this->hasMany(Car::class);
     }
-    public function makers(): BelongsTo
+    public function maker(): BelongsTo
     {
         return $this->belongsTo(Maker::class);
     }

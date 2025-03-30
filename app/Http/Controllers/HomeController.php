@@ -336,16 +336,33 @@ class HomeController extends Controller
         // Maker::factory()->count(2)->hasModels(2, ["name" => "Test"])->create();
         //it will make 4 model with name test and with 2 maker id( 2 maker id will inserted to maker table)
 
+
+
         // Maker::factory()->count(1)
         //     ->has(Model::factory()->count(1), 'carModels')->create();
         //if relation or func name is not same as model name in plural i.e. models then we 
         //have to mention the full func name is second param
-        Maker::factory()->count(1)
-            ->has(Model::factory()->count(1))->create();
+        // Maker::factory()->count(1)
+        //     ->has(Model::factory()->count(1))->create();
         //create 3 models with fake name from modelfactory and with ,maker id unique which is 
         //created in maker table (only 1 maker is created)
         //if relation or func name is  same as model name in plural i.e. models then we 
         //have not to mention the full func name is second param
+
+
+
+        //  Model::factory()->count(5)->forMaker(["name" => "Lexus"])->create();
+        //make 1 maker with name lexus in maker table(maker func in model.php so we used forMaker)
+        //also create 5 model random with maker id just created
+
+        // $maker = Maker::factory()->state(["name" => "demo"])->create();
+        // Model::factory()->count(1)->for($maker)->create();
+        //make 1 maker with name demo with the $maker object in maker table(maker func in model.php so we used forMaker)
+        //also create 1 model random with maker id just created
+
+
+        User::factory()->has(Car::factory()->count(5), 'favouriteCars')
+            ->create();
         return view("home.index");
     }
 }
