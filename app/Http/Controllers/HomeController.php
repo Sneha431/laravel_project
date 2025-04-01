@@ -360,9 +360,18 @@ class HomeController extends Controller
         //make 1 maker with name demo with the $maker object in maker table(maker func in model.php so we used forMaker)
         //also create 1 model random with maker id just created
 
-
-        User::factory()->has(Car::factory()->count(5), 'favouriteCars')
-            ->create();
+        //many to many factory relationship
+        // User::factory()->has(Car::factory()->count(5), 'favouredCars')
+        //     ->create();
+        //create 5 cars in car table with random car id , unique user id and other data in the same format
+        //mentioned in carfactory
+        //also 5 favouredcars with same 5 car id but same user id newly created
+        //also create 1 user in user table
+        //but other id like fuel type , car type remain matched with 
+        //existing data from car type and fuel type table
+        // User::factory()->hasAttached(Car::factory()->count(5),["col1=>"val1"], 'favouredCars')
+        //     ->create();
+        //same but attached additional column with data in favoured car table but we dont have 
         return view("home.index");
     }
 }

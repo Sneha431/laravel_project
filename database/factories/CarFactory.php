@@ -10,6 +10,7 @@ use App\Models\CarType;
 use App\Models\FuelType;
 use App\Models\User;
 use App\Models\City;
+use App\Models\State;
 use Illuminate\Support\Str;
 
 
@@ -25,6 +26,7 @@ class CarFactory extends Factory
      */
     public function definition(): array
     {
+
         return [
             'maker_id' => Maker::inRandomOrder()->first()->id,
             //Selects a random maker_id from the makers table.
@@ -39,10 +41,13 @@ class CarFactory extends Factory
             "price" => ((int)fake()->randomFloat(2, 5, 100)) * 1000,
             "vin" => strtoupper(Str::random(17)),
             "mileage" => ((int)fake()->randomFloat(2, 5, 500)) * 1000,
-            "car_type_id" => CarType::inRandomOrder()->first()->id,
-            "fuel_type_id" => FuelType::inRandomOrder()->first()->id,
-            "user_id" => User::inRandomOrder()->first()->id,
-            "city_id" => City::inRandomOrder()->first()->id,
+            "car_type_id"  => CarType::inRandomOrder()->first()->id ?? CarType::factory()->create()->id,
+            "fuel_type_id" => FuelType::inRandomOrder()->first()->id ?? FuelType::factory()->create()->id,
+            "user_id"      => User::inRandomOrder()->first()->id ?? User::factory()->create()->id,
+            "city_id" => optional(City::inRandomOrder()->first())->id ?? City::factory()->for(State::factory()->create())->create()->id,
+
+
+
             "address" => fake()->address(),
             "phone" => function (array $attributes) {
                 return User::find($attributes["user_id"])->phone;

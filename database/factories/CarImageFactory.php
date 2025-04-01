@@ -19,7 +19,7 @@ class CarImageFactory extends Factory
     {
         return [
             "image_path" => fake()->imageUrl(),
-            "posiion" => function (array $attributes) {
+            "position" => function (array $attributes) {
                 return Car::find($attributes["car_id"])->images()->count() + 1;
             }
         ];
