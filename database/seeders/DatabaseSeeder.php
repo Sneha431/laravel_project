@@ -93,8 +93,19 @@ class DatabaseSeeder extends Seeder
         User::factory()->count(2)
             ->has(Car::factory()->count(50)
                 ->has(
-                    CarImage::factory()->count(5)->sequence(fn(Sequence $sequence) =>
-                    ["position" => $sequence->index + 1]),
+                    CarImage::factory()->count(5)
+                        // ->sequence(fn(Sequence $sequence) =>
+                        // ["position" => $sequence->index  + 1]),
+                        ->sequence(fn(Sequence $sequence) =>
+                        ["position" => $sequence->index % 5 + 1]),
+                    // ->sequence(
+                    //     ["position" => 1],
+                    //     ["position" => 2],
+                    //     ["position" => 3],
+                    //     ["position" => 4],
+                    //     ["position" => 5],
+                    // ),
+
                     'images'
                 )->hasFeatures(), 'favouredCars')->create();
     }

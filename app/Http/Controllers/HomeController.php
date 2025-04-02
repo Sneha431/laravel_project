@@ -372,6 +372,11 @@ class HomeController extends Controller
         // User::factory()->hasAttached(Car::factory()->count(5),["col1=>"val1"], 'favouredCars')
         //     ->create();
         //same but attached additional column with data in favoured car table but we dont have 
-        return view("home.index");
+        $cars = Car::where("published_at", "<", now())
+            ->orderBy("published_at", "desc")
+            ->limit(30)
+            ->get();
+
+        return view("home.index", ["cars" => $cars]);
     }
 }
