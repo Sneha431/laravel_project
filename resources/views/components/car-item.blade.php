@@ -6,6 +6,7 @@
     </a>
     <div class="p-medium">
         <div class="flex items-center justify-between">
+            {{-- <small class="m-0 text-muted">{{$car->city_name}}</small> --}}
             <small class="m-0 text-muted">{{$car->city->name}}</small>
             <button class="btn-heart text-primary">
               

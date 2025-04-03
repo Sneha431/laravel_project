@@ -373,6 +373,7 @@ class HomeController extends Controller
         //     ->create();
         //same but attached additional column with data in favoured car table but we dont have 
         $cars = Car::where("published_at", "<", now())
+            ->with(['primaryImage', 'city', 'carType', 'fuelType', 'maker', 'model'])
             ->orderBy("published_at", "desc")
             ->limit(30)
             ->get();

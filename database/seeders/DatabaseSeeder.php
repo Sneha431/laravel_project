@@ -68,9 +68,19 @@ class DatabaseSeeder extends Seeder
             "Michigan" => ["Detroit", "Grand Rapids", "Ann Arbor", "Lansing", "Flint"]
         ];
 
+        // foreach ($states as $state => $cities) {
+        //     State::factory()->state(['name' => $state])->has(City::factory()->count(count($cities))
+        //         ->sequence(...array_map(fn($city) => ['name' => $city], $cities)))->create();
+        // }
         foreach ($states as $state => $cities) {
-            State::factory()->state(['name' => $state])->has(City::factory()->count(count($cities)))
-                ->sequence(...array_map(fn($city) => ['name' => $city], $cities))->create();
+            $createdState = State::factory()->create(['name' => $state]);
+
+            foreach ($cities as $city) {
+                City::factory()->create([
+                    'name' => $city,
+                    'state_id' => $createdState->id
+                ]);
+            }
         }
 
         $makers = [
