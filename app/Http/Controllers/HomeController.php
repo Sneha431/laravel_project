@@ -371,7 +371,8 @@ class HomeController extends Controller
         //existing data from car type and fuel type table
         // User::factory()->hasAttached(Car::factory()->count(5),["col1=>"val1"], 'favouredCars')
         //     ->create();
-        //same but attached additional column with data in favoured car table but we dont have 
+
+        //  same but attached additional column with data in favoured car table but we dont have 
         $cars = Car::where("published_at", "<", now())
             ->with(['primaryImage', 'city', 'carType', 'fuelType', 'maker', 'model'])
             ->orderBy("published_at", "desc")
@@ -379,5 +380,25 @@ class HomeController extends Controller
             ->get();
 
         return view("home.index", ["cars" => $cars]);
+
+
+        // return redirect()->away("https://www.google.com/");
+        //return redirect()->route("car.show", Car::first());
+        // return redirect()->route("car.show", ["car" => 1]);
+        // return redirect()->route("car.create");
+        // return redirect("/car/create");
+        // return response()->view("home.index", ["cars" => $cars], 200)->withHeaders([
+        //     "Header 1" => "Value1",
+        //     "Header 2" => "Value2"
+        // ]);
+        //  return response()->json([1, 2]);
+        // return ["Hello" => "World"];
+        // return "Hello";
+        // return Car::get();
+        // return Car::first();
+        // return response("Hello", 201);
+        // return response("Not found", 404);
+        // return response("Not found", 404)->header("Header 1", "Value1")->header("Header 2", "Value2");
+        //  dd(response("Not found", 404));
     }
 }
