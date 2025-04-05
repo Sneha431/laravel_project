@@ -10,12 +10,23 @@
                 <div class="car-images-and-description">
                     <div class="car-images-carousel">
                         <div class="car-image-wrapper">
-                            <img src="{{$car->primaryImage->image_path}}" alt="" class="car-active-image"
-                                id="activeImage" />
+                            @php 
+$img = $car->primaryImage->image_path ?? null;
+
+                           @endphp
+                            
+                            <img src="{{ Str::startsWith($img, ['http://', 'https://']) ? $img : asset('uploads/cars/' . $img) }}" alt="Car Image"
+                                class="car-active-image"  id="activeImage" />
+                           
                         </div>
                         <div class="car-image-thumbnails">
-                           @foreach ($car->images as $image)
-                            <img src="{{$image->image_path}}" alt="" class="car-active-image" id="activeImage" />
+                           @foreach ($images as $image)
+                              @php 
+                                $img = $image->image_path ?? null;
+
+                               @endphp
+                                                        <img src="{{ Str::startsWith($img, ['http://', 'https://']) ? $img : asset('uploads/cars/' . $img) }}" alt="Car Image"
+                                                            class="car-active-image"  id="activeImage" />
                            @endforeach
                         </div>
                         <button class="carousel-button prev-button" id="prevButton">

@@ -2,8 +2,17 @@
 
 <div class="car-item card">
     <a href="{{route("car.show", $car)}}">
-        <img src="{{$car->primaryImage->image_path}}" alt="" class="car-item-img rounded-t" />
-    </a>
+@php use Illuminate\Support\Str; @endphp
+
+@php
+    $img = $car->primaryImage->image_path ?? null;
+@endphp
+
+<img src="{{ Str::startsWith($img, ['http://', 'https://']) ? $img : asset('uploads/cars/' . $img) }}" alt="Car Image"
+    class="car-item-img rounded-t" />
+
+
+</a>
     <div class="p-medium">
         <div class="flex items-center justify-between">
             {{-- <small class="m-0 text-muted">{{$car->city_name}}</small> --}}

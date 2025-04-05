@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Car;
 use App\Models\CarFeatures;
+use App\Models\CarImage;
 use App\Models\City;
 use App\Models\State;
 use App\Models\User;
@@ -47,16 +48,210 @@ class CarController extends Controller
      */
     public function create()
     {
-        return view("car.create");
+        // $maker = $car->maker;
+        // $model = $car->model;
+        $makers = Maker::with('models')->get();
+
+        $models = Model::with('maker')->get();
+        $years = Car::select("year")->orderBy("year", "desc")->distinct()->pluck("year");
+        //now years will be array of years not object
+        // $cartype = CarType::select("name")->orderBy("name", "asc")->distinct()->pluck("name");
+        $cartypes = CarType::select("*")->orderBy("name", "asc")->distinct()->get();
+        $fueltypes = FuelType::select("*")->orderBy("name", "asc")->distinct()->get();
+        $states = State::select("*")->orderBy("name", "asc")->distinct()->get();
+        $cities = City::select("*")->orderBy("name", "asc")->distinct()->get();
+        $carfeatures = CarFeatures::select("*")->get()->toArray();
+        // dd($carfeatures[0]['car_id']);
+        // $city_state = $car->city->state_id;
+
+        // dd($city_state, $car->city_id);
+        return view("car.create", [
+
+            "makers" => $makers,
+            "models" => $models,
+            "years" => $years,
+            "cartypes" => $cartypes,
+            "fueltypes" => $fueltypes,
+            "states" => $states,
+            "cities" => $cities,
+            "carfeatures" => $carfeatures,
+        ]);
+    }
+    public function store(Request $request)
+    {
+        $rules = [
+            "maker_id" => "required",
+            "model_id" => "required",
+            "year" => "required|integer|min:1900|max:" . date("Y"),
+            "mileage" => "required|numeric|min:0|max:1000000",
+            "vin" => "required|string|size:17",
+            "address" => "required|string|max:255",
+            "phone" => "required|string|max:15",
+            "car_type_id" => "required",
+            "fuel_type_id" => "required",
+            "city_id" => "required",
+            "price" => "required|numeric|min:0|max:10000000",
+            "description" => "nullable|string|max:1000",
+            "image_path.*" => "image|mimes:jpeg,png,jpg,gif|max:2048"
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return redirect()->route("car.create")->withInput()->withErrors($validator);
+        }
+
+        $car = new Car();
+        $car->maker_id = $request->maker_id;
+        $car->model_id = $request->model_id;
+        $car->year = $request->year;
+        $car->mileage = $request->mileage;
+        $car->vin = $request->vin;
+        $car->address = $request->address;
+        $car->phone = $request->phone;
+        $car->car_type_id = $request->car_type_id;
+        $car->fuel_type_id = $request->fuel_type_id;
+        $car->city_id = $request->city_id;
+        $car->price = $request->price;
+        $car->description = $request->description;
+        $car->published_at =  $request->published_at == "1" ? now() : null;
+        $car->user_id = 1;
+        $car->created_at = now();
+        $car->save();
+
+        // ✅ Save all uploaded images
+        if ($request->hasFile('image_path')) {
+            foreach ($request->file('image_path') as $image) {
+                $ext = $image->getClientOriginalExtension();
+                $imageName = time() . "_" . uniqid() . "." . $ext;
+                $image->move(public_path('uploads/cars'), $imageName);
+
+                $pos = CarImage::where('car_id', $car->id)->max('position');
+                $pos = $pos ? $pos + 1 : 1;
+
+                $car->images()->create([
+                    'image_path' => $imageName,
+                    'position' => $pos,
+                ]);
+            }
+        }
+
+        // ✅ Create or update car features
+        $features = $car->features()->firstOrCreate([]);
+        $features->abs = (int)$request->abs;
+        $features->air_conditioning = (int)$request->air_conditioning;
+        $features->power_windows = (int)$request->power_windows;
+        $features->power_door_locks = (int)$request->power_door_locks;
+        $features->cruise_control = (int)$request->cruise_control;
+        $features->bluetooth_connectivity = (int)$request->bluetooth_connectivity;
+        $features->remote_start = (int)$request->remote_start;
+        $features->gps_navigation = (int)$request->gps_navigation;
+        $features->heater_seats = (int)$request->heater_seats;
+        $features->climate_control = (int)$request->climate_control;
+        $features->rear_parking_sensors = (int)$request->rear_parking_sensors;
+        $features->leather_seats = (int)$request->leather_seats;
+        $features->save();
+
+        return redirect()->route("car.create")->with("success", "Car created successfully");
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        //
-    }
+    // public function store(Request $request)
+    // {
+    //     //
+    //     // dd($request->all());
+    //     $rules = [
+    //         "maker_id" => "required",
+    //         "model_id" => "required",
+    //         "year" => "required|integer|min:1900|max:" . date("Y"),
+    //         "mileage" => "required|numeric|min:0|max:1000000",
+    //         "vin" => "required|string|size:17",
+    //         "address" => "required|string|max:255",
+    //         "phone" => "required|string|max:15",
+    //         "car_type_id" => "required",
+    //         "fuel_type_id" => "required",
+    //         "city_id" => "required",
+
+    //         "price" => "required|numeric|min:0|max:10000000",
+    //         "description" => "nullable|string|max:1000",
+    //     ];
+
+
+
+    //     $validator = Validator::make($request->all(), $rules);
+    //     // dd($validator->errors());
+    //     if ($validator->fails()) {
+    //         return redirect()->route("car.create")->withInput()->withErrors($validator);
+    //     }
+
+    //     $car = new Car();
+    //     $car->maker_id = $request->maker_id;
+    //     $car->model_id = $request->model_id;
+    //     $car->year = $request->year;
+    //     $car->mileage = $request->mileage;
+    //     $car->vin = $request->vin;
+    //     $car->address = $request->address;
+    //     $car->phone = $request->phone;
+    //     $car->car_type_id = $request->car_type_id;
+    //     $car->fuel_type_id = $request->fuel_type_id;
+    //     $car->city_id = $request->city_id;
+
+    //     $car->price = $request->price;
+    //     $car->description = $request->description;
+    //     $car->published_at =  $request->published_at == "1" ? now() : null;
+    //     $car->user_id = 1; // Assuming the user ID is 1 for this example
+
+    //     $car->created_at = now();
+
+
+
+    //     if ($car->save()) {
+    //         if ($request->image_path) {
+
+
+    //             foreach ($request->file('image_path') as $image) {
+    //                 $ext = $image->getClientOriginalExtension();
+    //                 $imageName = time() . "_" . uniqid() . "." . $ext;
+    //                 $image->move(public_path('uploads/cars'), $imageName);
+    //                 $pos = CarImage::where('car_id', $car->id)->select('position')->max('position');
+    //                 $pos = $pos ? $pos + 1 : 1; // Increment position or set to 1 if no images exist
+
+
+    //                 $car->primaryImage()->create([
+    //                     'image_path' => $imageName,
+    //                     'position' => $pos
+    //                 ]);
+
+    //                 if ($car->primaryImage->save()) {
+    //                     if (!$car->features) {
+    //                         $car->features()->create([]); // Create an empty feature record if none exists
+    //                     }
+    //                     $features = $car->features()->firstOrCreate([]);
+
+    //                     $features->abs = (int)$request->abs;
+    //                     $features->air_conditioning = (int)$request->air_conditioning;
+    //                     $features->power_windows = (int)$request->power_windows;
+    //                     $features->power_door_locks = (int)$request->power_door_locks;
+    //                     $features->cruise_control = (int)$request->cruise_control;
+    //                     $features->bluetooth_connectivity = (int)$request->bluetooth_connectivity;
+    //                     $features->remote_start = (int)$request->remote_start;
+    //                     $features->gps_navigation = (int)$request->gps_navigation;
+    //                     $features->heater_seats = (int)$request->heater_seats;
+    //                     $features->climate_control = (int)$request->climate_control;
+    //                     $features->rear_parking_sensors = (int)$request->rear_parking_sensors;
+    //                     $features->leather_seats = (int)$request->leather_seats;
+
+    //                     $features->save();
+    //                     return redirect()->route("car.create")->with("success", "Car updated successfully");
+    //                 }
+    //             }
+    //         }
+    //         // Ensure the car features exist
+
+    //     }
+    // }
 
     /**
      * Display the specified resource.
@@ -97,7 +292,10 @@ class CarController extends Controller
         // dd($request->header('Content-Type')); //output : "application/json" //null /
         // dd($request->bearerToken()); //null
         // dd($request->ip()); //"127.0.0.1"
-        return view("car.show", ["car" => $car]);
+
+        $images = $car->images()->orderBy("position", "asc")->distinct()->get();
+
+        return view("car.show", ["car" => $car, "images" => $images]);
     }
 
     /**
@@ -122,6 +320,7 @@ class CarController extends Controller
         // $city_state = $car->city->state_id;
 
         // dd($city_state, $car->city_id);
+        $images = $car->images()->distinct()->get();
         return view("car.edit", [
             "car" => $car,
             "makers" => $makers,
@@ -132,6 +331,7 @@ class CarController extends Controller
             "states" => $states,
             "cities" => $cities,
             "carfeatures" => $carfeatures,
+            "images" => $images
         ]);
     }
 
@@ -177,7 +377,7 @@ class CarController extends Controller
         $car->car_type_id = $request->car_type_id;
         $car->fuel_type_id = $request->fuel_type_id;
         $car->city_id = $request->city_id;
-        $car->city->state_id = $request->state_id;
+        // $car->city->state_id = $request->state_id;
         $car->price = $request->price;
         $car->description = $request->description;
         $car->published_at =  $request->published_at == "1" ? now() : null;
@@ -209,6 +409,56 @@ class CarController extends Controller
 
         return redirect()->route("car.edit", $car->id)->with("success", "Car updated successfully");
     }
+    public function editimages(Car $car)
+    {
+        $images = CarImage::select("*")->where("car_id", $car->id)->distinct()->orderBy("position", "asc")->get();
+
+
+        return view("car.car_image", ["images" => $images, "car" => $car]);
+    }
+
+    public function updateimages(Request $request, Car $car)
+    {
+        foreach ($request->id as $key => $rid) {
+            $carimage = CarImage::find($rid);
+            if (!$carimage) continue;
+
+            // If this image's ID is in the delete_images array
+            if (in_array($rid, $request->delete_images ?? [])) {
+                // Delete image (and optionally its file)
+                $imagePath = public_path('uploads/cars/' . $carimage->image_path);
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+                $carimage->delete();
+            } else {
+                // Update position
+                $carimage->position = $request->position[$key];
+                $carimage->save();
+            }
+        }
+        return redirect()->route("car.editimages", $car)->with("success", "Car images updated / deleted successfully");
+    }
+
+    public function addimages(Request $request, Car $car)
+    {
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $ext = $image->getClientOriginalExtension();
+                $imageName = time() . "_" . uniqid() . "." . $ext;
+                $image->move(public_path('uploads/cars'), $imageName);
+
+                $pos = CarImage::where('car_id', $car->id)->max('position');
+                $pos = $pos ? $pos + 1 : 1;
+
+                $car->images()->create([
+                    'image_path' => $imageName,
+                    'position' => $pos,
+                ]);
+            }
+        }
+        return redirect()->route("car.editimages", $car)->with("success", "Car images added successfully");
+    }
 
     /**
      * Remove the specified resource from storage.
@@ -216,6 +466,14 @@ class CarController extends Controller
     public function destroy(Car $car)
     {
         //
+    }
+
+    public function delete(Car $car)
+    {
+        //
+        $car = Car::find($car->id);
+        $car->delete();
+        return redirect()->route("car.index")->with("success", "Car deleted successfully");
     }
     public function search()
     {

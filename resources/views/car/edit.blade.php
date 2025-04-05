@@ -1,4 +1,4 @@
-@props(['cars','makers','models','years','states','cities','cartypes','fueltypes',  'carfeatures'])
+@props(['cars', 'makers', 'models', 'years', 'states', 'cities', 'cartypes', 'fueltypes', 'carfeatures'])
 <x-app-layout>
     <main>
         <div class="container-small">
@@ -260,14 +260,29 @@
                     <div class="form-images">
                         <p class="my-large">
                             Manage your images
-                            <a href="/car_images.html">From here</a>
+                            <a href="{{route('car.editimages', $car)}}">From here</a>
                         </p>
                         <div class="car-form-images">
                             <a class="car-form-image-preview">
-                                <img src="{{$car->primaryImage->image_path}}" alt="" />
+                               @if($images->isEmpty())
+    <img src="{{ asset('uploads/cars/no-image.png') }}" alt="Car Image" class="car-active-image" id="activeImage" />
+@else
+
+                           
+                                  @foreach ($images as $image)
+                                                                                  @php 
+                                                                                     $img = $image->image_path ?? null;
+                                                                                   
+                                                                                   @endphp
+
+                                                                 <img src="{{ $img != null ? Str::startsWith($img, ['http://', 'https://']) ? $img : asset('uploads/cars/' . $img) : asset('uploads/cars/no-image.png')}}"  alt="Car Image"
+                                                                                                                              class="car-active-image"  id="activeImage" />
+                                   @endforeach
+                            @endif
                             </a>
                         
                         </div>
+                        
                     </div>
                 </div>
                 <div class="p-medium" style="width: 100%">
