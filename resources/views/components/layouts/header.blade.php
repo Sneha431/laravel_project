@@ -1,4 +1,7 @@
 <header class="navbar">
+    @php
+    $username = session('username');
+@endphp
     <div class="container navbar-content">
         <a href="{{route('home.index')}}" class="logo-wrapper">
             <img src="/img/logoipsum-265.svg" alt="Logo" />
@@ -20,14 +23,18 @@
                 Add new Car
             </a>
             <div class="navbar-menu" tabindex="-1">
+                
                 <a href="javascript:void(0)" class="navbar-menu-handler">
                     My Account
+                   
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" style="width: 20px">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                     </svg>
                 </a>
+                
                 <ul class="submenu">
+
                     <li>
                         <a href="{{route('car.index')}}">My Cars</a>
                     </li>
@@ -35,12 +42,16 @@
                         <a href="{{route('car.watchlist')}}">My Favourite Cars</a>
                     </li>
                     <li>
-                        <form action="#" method="post">
-                            <button>Logout</button>
-                        </form>
+                                   @auth
+                           <a href="{{route('logout')}}" class="btn btn-login flex items-center">Logout</a>
+                         @endauth
                     </li>
                 </ul>
+               
             </div>
+ <a class="flex items-center" style="text-decoration:none">{{$username}}</a>
+          
+            @guest
             <a href="{{route('signup')}}" class="btn btn-primary btn-signup">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" style="width: 18px; margin-right: 4px">
@@ -59,6 +70,7 @@
                 </svg>
                 Login
             </a>
+            @endguest
         </div>
     </div>
 </header>

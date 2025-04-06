@@ -2,6 +2,7 @@
 <x-app-layout title="Home Page">
         <!-- Home Slider -->
         <section class="hero-slider">
+           
             <!-- Carousel wrapper -->
             <div class="hero-slides">
                 <!-- Item 1 -->
@@ -70,8 +71,19 @@
         <!--/ Home Slider -->
         <main>
             <!--/ Find a car form -->
-            <x-search-form action="/search" />
-            <!-- New Cars -->
+       
+           <x-search-form
+    action="/search"
+    :cars="$cars"
+    :makers="$makers"
+    :models="$models"
+    :years="$years"
+    :states="$states"
+    :cities="$cities"
+    :cartypes="$cartypes"
+    :fueltypes="$fueltypes"
+/>
+  <!-- New Cars -->
             <section>
                 <div class="container">
                     <h2>Latest Added Cars</h2>

@@ -1,6 +1,6 @@
 @props(['cars'])
 
-<x-app-layout bodyClass="page-my-cars">
+<x-app-layout bodyClass="page-my-cars" title="Show Car Page">
     <main>
         <div>
             <div class="container">

@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout title="Search Car Page">
     <main>
         <!-- Found Cars -->
         <section>

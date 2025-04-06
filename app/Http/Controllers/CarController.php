@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\DB;
 use App\Models\Car;
 use App\Models\CarFeatures;
 use App\Models\CarImage;
@@ -13,6 +13,7 @@ use App\Models\Model;
 use App\Models\CarType;
 use App\Models\FuelType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
 class CarController extends Controller
@@ -23,7 +24,8 @@ class CarController extends Controller
     public function index(Request $request)
     {
         // dd($request, request());
-        $cars = User::find(1)
+        $userid = session('userid');
+        $cars = User::find($userid)
             ->cars()
             ->with(['primaryImage',  'maker', 'model'])
             ->orderBy("created_at", "desc")
@@ -92,15 +94,29 @@ class CarController extends Controller
             "city_id" => "required",
             "price" => "required|numeric|min:0|max:10000000",
             "description" => "nullable|string|max:1000",
-            "image_path.*" => "image|mimes:jpeg,png,jpg,gif|max:2048"
+            "image_path" => "required|image|mimes:jpeg,png,jpg,gif|max:2048"
         ];
-
-        $validator = Validator::make($request->all(), $rules);
-
+        $customAttributes = [
+            'maker_id' => 'maker',
+            'model_id' => 'model',
+            'car_type_id' => 'car type',
+            'fuel_type_id' => 'fuel type',
+            'city_id' => 'city',
+            'vin' => 'VIN',
+            'mileage' => 'mileage',
+            'year' => 'year',
+            'address' => 'address',
+            'phone' => 'phone number',
+            'price' => 'price',
+            'description' => 'description',
+            'image_path' => 'image',
+        ];
+        // $validator = Validator::make($request->all(), $rules);
+        $validator = Validator::make($request->all(), $rules, [], $customAttributes);
         if ($validator->fails()) {
             return redirect()->route("car.create")->withInput()->withErrors($validator);
         }
-
+        $userid = session('userid');
         $car = new Car();
         $car->maker_id = $request->maker_id;
         $car->model_id = $request->model_id;
@@ -115,7 +131,7 @@ class CarController extends Controller
         $car->price = $request->price;
         $car->description = $request->description;
         $car->published_at =  $request->published_at == "1" ? now() : null;
-        $car->user_id = 1;
+        $car->user_id =   $userid;
         $car->created_at = now();
         $car->save();
 
@@ -352,18 +368,32 @@ class CarController extends Controller
             "car_type_id" => "required",
             "fuel_type_id" => "required",
             "city_id" => "required",
-
             "price" => "required|numeric|min:0|max:10000000",
             "description" => "nullable|string|max:1000",
+          //  "image_path" => "required|image|mimes:jpeg,png,jpg,gif|max:2048"
         ];
-
-
-
-        $validator = Validator::make($request->all(), $rules);
-        // dd($validator->errors());
+        $customAttributes = [
+            'maker_id' => 'maker',
+            'model_id' => 'model',
+            'car_type_id' => 'car type',
+            'fuel_type_id' => 'fuel type',
+            'city_id' => 'city',
+            'vin' => 'VIN',
+            'mileage' => 'mileage',
+            'year' => 'year',
+            'address' => 'address',
+            'phone' => 'phone number',
+            'price' => 'price',
+            'description' => 'description',
+           // 'image_path' => 'image',
+        ];
+        // $validator = Validator::make($request->all(), $rules);
+        $validator = Validator::make($request->all(), $rules, [], $customAttributes);
         if ($validator->fails()) {
             return redirect()->route("car.edit", $car->id)->withInput()->withErrors($validator);
         }
+        // dd($validator->errors());
+
 
 
         $car = Car::find($car->id);
@@ -475,7 +505,7 @@ class CarController extends Controller
         $car->delete();
         return redirect()->route("car.index")->with("success", "Car deleted successfully");
     }
-    public function search()
+    public function search(Request $request)
     {
         //inner join
         // $query = Car::where("published_at", "<", now())
@@ -511,6 +541,9 @@ class CarController extends Controller
         // $query->select("cars.*", "cities.name as city_name");
 
 
+     
+       
+
 
         // $cars = $query->limit(30)->get();
         // $carCount = $query->count();
@@ -524,6 +557,35 @@ class CarController extends Controller
             ->orderBy("published_at", "desc");
         $cars = $query->paginate(15);
 
+        
+// $query = Car::select("cars.*")
+//     ->join("cities", "cities.id", "=", "cars.city_id")
+//     ->join("car_types", "car_types.id", "=", "cars.car_type_id")
+//     ->join("fuel_types", "fuel_types.id", "=", "cars.fuel_type_id")
+//     ->join("models", "models.id", "=", "cars.model_id")
+//     ->join("makers", "makers.id", "=", "cars.maker_id")
+//     ->where("cars.published_at", "<", now())
+//              ->where("year",$request->year);
+             
+// $cars = $query->paginate(15);
+// DB::enableQueryLog();
+// $query = Car::select("cars.*")
+//     ->join("cities", "cities.id", "=", "cars.city_id")
+//     ->join("car_types", "car_types.id", "=", "cars.car_type_id")
+//     ->join("fuel_types", "fuel_types.id", "=", "cars.fuel_type_id")
+//     ->join("models", "models.id", "=", "cars.model_id")
+//     ->join("makers", "makers.id", "=", "cars.maker_id")
+//     ->where("cars.published_at", "<", now())
+//     ->when($request->year, fn($q) => $q->where("cars.year", $request->year))
+//     ->when($request->fuel_type_id, fn($q) => $q->where("cars.fuel_type_id", $request->fuel_type_id))
+//     ->when($request->car_type_id, fn($q) => $q->where("cars.car_type_id", $request->car_type_id))
+//     ->when($request->maker_id, fn($q) => $q->where("cars.maker_id", $request->maker_id))
+//     ->when($request->model_id, fn($q) => $q->where("cars.model_id", $request->model_id))
+//     ->when($request->city_id, fn($q) => $q->where("cars.city_id", $request->city_id))
+//     ->orderBy("cars.published_at", "desc")
+//     ->get();
+
+// dd(DB::getQueryLog());
         return view(
             "car.search",
             ["cars" => $cars]
@@ -532,7 +594,8 @@ class CarController extends Controller
 
     public function watchlist()
     {
-        $cars = User::find(4)
+        $userid = session('userid');
+        $cars = User::find($userid)
             ->favouredCars()
             ->with(['primaryImage', 'city', 'carType', 'fuelType', 'maker', 'model'])
             ->paginate(15);

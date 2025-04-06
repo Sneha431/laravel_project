@@ -1,5 +1,17 @@
 @props(['cars', 'makers', 'models', 'years', 'states', 'cities', 'cartypes', 'fueltypes', 'carfeatures'])
-<x-app-layout>
+<x-app-layout title="Edit Car Page">
+     @if($errors->any())
+ <div class="container my-large">
+    <div class="error-message"> 
+      <ul>
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+      </div>
+    </div>
+  
+@endif
     <main>
         <div class="container-small">
             <h1 class="car-details-page-title">Edit Car: {{$car->maker->name}} {{$car->model->name}}
@@ -274,9 +286,9 @@
                                                                                      $img = $image->image_path ?? null;
                                                                                    
                                                                                    @endphp
-
+<input type="hidden" name="image_path[]" value="{{$img}}"/>
                                                                  <img src="{{ $img != null ? Str::startsWith($img, ['http://', 'https://']) ? $img : asset('uploads/cars/' . $img) : asset('uploads/cars/no-image.png')}}"  alt="Car Image"
-                                                                                                                              class="car-active-image"  id="activeImage" />
+                                                                                                                              class="car-active-image"  id="activeImage"  />
                                    @endforeach
                             @endif
                             </a>
@@ -287,8 +299,8 @@
                 </div>
                 <div class="p-medium" style="width: 100%">
                     <div class="flex justify-end gap-1">
-                        <button type="button" class="btn btn-default">Reset</button>
-                        <button class="btn btn-primary" type="submit">Submit</button>
+                          <input type="reset" value="Reset" class="reset_btn" style="width:84px;background-color: #e9580c;color:white">
+                        <button class="btn btn-primary" type="submit">Update</button>
                     </div>
                 </div>
             </form>

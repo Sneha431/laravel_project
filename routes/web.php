@@ -11,17 +11,18 @@ Route::get("/signup", [SignUpController::class, "signup"])->name("signup");
 
 
 Route::get("/login", [LoginController::class, "login"])->name("login");
+Route::get("logout", [LoginController::class, "logout"])->name("logout");
 Route::get("/reset", [LoginController::class, "reset"])->name("password.reset");
 Route::post("/login", [LoginController::class, "loginpost"])->name("login.post");
 Route::post("/register", [SignUpController::class, "registeruser"])->name("register");
-
+Route::get("/", [HomeController::class, "index"])->name("home.index");
 // Route::get('/', function () {
 //     return view('home.index');
 // })->name('home.index');
 Route::middleware(["auth"])->group(
   function () {
-    Route::get("/", [HomeController::class, "index"])->name("home.index");
-    Route::get("/car/search", [CarController::class, "search"])->name("car.search");
+
+    Route::post("/car/search", [CarController::class, "search"])->name("car.search");
     Route::get("/car/images/edit/{car}", [CarController::class, "editimages"])->name("car.editimages");
     Route::post("/car/images/add/{car}", [CarController::class, "addimages"])->name("car.addimages");
     Route::post("/car/update/images/{car}", [CarController::class, "updateimages"])->name("car.updateimages");

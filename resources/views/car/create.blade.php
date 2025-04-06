@@ -1,5 +1,19 @@
 @props(['makers', 'models', 'years', 'states', 'cities', 'cartypes', 'fueltypes', 'carfeatures'])
-<x-app-layout>
+<x-app-layout title="Add Car Page">
+
+ @if($errors->any())
+ <div class="container my-large">
+    <div class="error-message"> 
+      <ul>
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+      </div>
+    </div>
+  
+@endif
+
     <main>
         <div class="container-small">
             <h1 class="car-details-page-title">Add Car
@@ -270,8 +284,9 @@
                       </div>
                 <div class="p-medium" style="width: 100%">
                     <div class="flex justify-end gap-1">
-                        <button type="button" class="btn btn-default">Reset</button>
-                        <button class="btn btn-primary" type="submit">Submit</button>
+                <input type="reset" value="Reset" class="reset_btn" style="width:84px;background-color: #e9580c;color:white">
+                     
+                        <button class="btn btn-primary" type="submit">Create</button>
                     </div>
                 </div>
             </form>

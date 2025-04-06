@@ -1,9 +1,22 @@
-<x-app-layout>
+<x-app-layout title="Car Details Page">
+    
     <main>
         <div class="container">
-            <h1 class="car-details-page-title">{{$car->maker->name}}
+            <div class="flex justify-between">
+                <h1 class="car-details-page-title">{{$car->maker->name}}
                 {{$car->model->name}} - {{$car->year}}
             </h1>
+             <span>
+            <a href="{{route('car.edit', $car)}}" class="btn btn-edit inline-flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                                    stroke="currentColor" style="width: 12px; margin-right: 5px">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+                                                </svg>
+
+                                                Edit
+                                            </a></span>
+            </div>
             <div class="car-details-region">{{$car->city->name}} - {{$car->published_at}}</div>
     
             <div class="car-details-content">
