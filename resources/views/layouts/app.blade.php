@@ -3,9 +3,14 @@
   <x-base-layout :$title :$bodyClass>
 <x-layouts.header></x-layouts.header>
   @if(Session::has('success'))
-    
+
     <div class="container my-large">
     <div class="success-message">{{Session::get('success')}}</div>
+    </div>
+
+  @elseif(Session::has('error'))
+    <div class="container my-large">
+    <div class="error-message">{{Session::get('error')}}</div>
     </div>
   @endif
 {{$slot}}

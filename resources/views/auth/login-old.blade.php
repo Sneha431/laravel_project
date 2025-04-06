@@ -37,7 +37,7 @@
         </div>
         <div class="login-text-dont-have-account">
         Don't have an account? -
-        <a href="{{route('auth.signup')}}"> Click here to create one</a>
+        <a href="{{route('signup')}}"> Click here to create one</a>
         </div>
       </form>
       </div>

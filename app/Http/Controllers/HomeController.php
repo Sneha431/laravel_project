@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use App\Models\Car;
 use App\Models\User;
@@ -378,7 +379,9 @@ class HomeController extends Controller
             ->orderBy("published_at", "desc")
             ->limit(30)
             ->get();
-
+        // if (!Auth::check()) {
+        //     return redirect()->route("login");
+        // }
         return view("home.index", ["cars" => $cars]);
 
 
