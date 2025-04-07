@@ -17,7 +17,10 @@
         <div class="flex items-center justify-between">
             {{-- <small class="m-0 text-muted">{{$car->city_name}}</small> --}}
             <small class="m-0 text-muted">{{$car->city->name}}</small>
-            <button class="btn-heart text-primary">
+            <form method="post" action="{{ route("cars.favourite") }}">
+                @csrf
+                <input type="hidden" value="{{ $car->id }}" name="car_id_fav"/>
+                <button class="btn-heart text-primary" type="submit">
               
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" 
                 style="width: 16px" @class(['hidden' => !$isInwatchlist])>
@@ -33,9 +36,12 @@
 
                 
             </button>
+            </form>
+            
         </div>
         <h2 class="car-item-title">{{$car->year}} - {{$car->maker->name}} {{$car->model->name}}</h2>
         <p class="car-item-price">${{$car->price}}</p>
+          <p class="car-item-price">Mileage : {{$car->mileage}}</p>
         <hr />
         <p class="m-0">
             <span class="car-item-badge">{{$car->carType->name}}</span>

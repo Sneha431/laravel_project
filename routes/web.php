@@ -23,6 +23,9 @@ Route::middleware(["auth"])->group(
   function () {
 
     Route::post("/car/search", [CarController::class, "search"])->name("car.search");
+    
+     Route::post("/car/favourite", [CarController::class, "favourite"])->name("cars.favourite");
+  //   Route::get("/car/search", [CarController::class, "search"])->name("car.search");
     Route::get("/car/images/edit/{car}", [CarController::class, "editimages"])->name("car.editimages");
     Route::post("/car/images/add/{car}", [CarController::class, "addimages"])->name("car.addimages");
     Route::post("/car/update/images/{car}", [CarController::class, "updateimages"])->name("car.updateimages");
@@ -31,6 +34,7 @@ Route::middleware(["auth"])->group(
     Route::delete("/car/delete/{car}", [CarController::class, "delete"])->name("car.delete");
     // we need to put this route before resource because in car controller resource crud in case of edit show 
     // the route will look same car/{car} so it will execure the above route as show route
+     Route::post("/car/favourite", [CarController::class, "favourite"])->name("cars.favourite");
     Route::get("/car/watchlist", [CarController::class, "watchlist"])->name("car.watchlist");
     Route::resource("car", CarController::class);
   }

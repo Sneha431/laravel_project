@@ -552,10 +552,10 @@ class CarController extends Controller
         //     ["cars" => $cars, 'carCount' => $carCount]
         // );
 
-        $query = Car::where("published_at", "<", now())
-            ->with(['primaryImage', 'city', 'carType', 'fuelType', 'maker', 'model'])
-            ->orderBy("published_at", "desc");
-        $cars = $query->paginate(15);
+        // $query = Car::where("published_at", "<", now())
+        //     ->with(['primaryImage', 'city', 'carType', 'fuelType', 'maker', 'model'])
+        //     ->orderBy("published_at", "desc");
+        // $cars = $query->paginate(15);
 
         
 // $query = Car::select("cars.*")
@@ -569,28 +569,120 @@ class CarController extends Controller
              
 // $cars = $query->paginate(15);
 // DB::enableQueryLog();
-// $query = Car::select("cars.*")
-//     ->join("cities", "cities.id", "=", "cars.city_id")
-//     ->join("car_types", "car_types.id", "=", "cars.car_type_id")
-//     ->join("fuel_types", "fuel_types.id", "=", "cars.fuel_type_id")
-//     ->join("models", "models.id", "=", "cars.model_id")
-//     ->join("makers", "makers.id", "=", "cars.maker_id")
-//     ->where("cars.published_at", "<", now())
-//     ->when($request->year, fn($q) => $q->where("cars.year", $request->year))
-//     ->when($request->fuel_type_id, fn($q) => $q->where("cars.fuel_type_id", $request->fuel_type_id))
-//     ->when($request->car_type_id, fn($q) => $q->where("cars.car_type_id", $request->car_type_id))
-//     ->when($request->maker_id, fn($q) => $q->where("cars.maker_id", $request->maker_id))
-//     ->when($request->model_id, fn($q) => $q->where("cars.model_id", $request->model_id))
-//     ->when($request->city_id, fn($q) => $q->where("cars.city_id", $request->city_id))
-//     ->orderBy("cars.published_at", "desc")
-//     ->get();
+
+$sortOrder = in_array($request->priceorder, ['asc', 'desc']) ? $request->priceorder : 'asc';
+if($request->priceorder != null)
+{
+    $cars = Car::orderBy('cars.price', $sortOrder)->paginate(15);
+}
+else{
+    $cars = Car::select("cars.*")
+        ->join("cities", "cities.id", "=", "cars.city_id")
+        ->join("car_types", "car_types.id", "=", "cars.car_type_id")
+        ->join("fuel_types", "fuel_types.id", "=", "cars.fuel_type_id")
+        ->join("models", "models.id", "=", "cars.model_id")
+        ->join("makers", "makers.id", "=", "cars.maker_id")
+        ->when($request->maker_id, fn($q) => $q->where("cars.maker_id", $request->maker_id))
+        ->when($request->model_id, fn($q) => $q->where("cars.model_id", $request->model_id))
+        ->when($request->state_id, fn($q) => $q->where("cities.state_id", $request->state_id))
+        ->when($request->city_id, fn($q) => $q->where("cars.city_id", $request->city_id))
+        ->when($request->car_type_id, fn($q) => $q->where("cars.car_type_id", $request->car_type_id))
+        ->when($request->fuel_type_id, fn($q) => $q->where("cars.fuel_type_id", $request->fuel_type_id))
+        // Year range filtering
+    ->when($request->year_from, fn($q) => $q->where("cars.year", ">=", $request->year_from))
+    ->when($request->year_to, fn($q) => $q->where("cars.year", "<=", $request->year_to))
+
+    // Price range filtering
+    ->when($request->price_from, fn($q) => $q->where("cars.price", ">=", $request->price_from))
+    ->when($request->price_to, fn($q) => $q->where("cars.price", "<=", $request->price_to))
+->when($request->mileage,fn($q)=>$q->where("cars.mileage","<=",$request->mileage))
+        ->where("cars.published_at", "<", now())
+        ->orderBy("cars.published_at", "desc")
+   
+        ->with(['primaryImage']) // eager load any relationships if needed
+        ->paginate(15);
+}
+
+
 
 // dd(DB::getQueryLog());
-        return view(
+
+//select all car details
+
+$makers = Maker::with('models')->get();
+
+        $models = Model::with('maker')->get();
+        $years = Car::select("year")->orderBy("year", "desc")->distinct()->pluck("year");
+      
+        $cartypes = CarType::select("*")->orderBy("name", "asc")->distinct()->get();
+        $fueltypes = FuelType::select("*")->orderBy("name", "asc")->distinct()->get();
+        $states = State::select("*")->orderBy("name", "asc")->distinct()->get();
+        $cities = City::select("*")->orderBy("name", "asc")->distinct()->get();
+      //   $images = CarImage::all("image_path")->pluck("image_path");
+     $mileages=Car::pluck('mileage')->unique()->sort()->values();
+  
+
+ 
+    
+if ($cars->isNotEmpty())
+ {
+    return view(
             "car.search",
-            ["cars" => $cars]
-        );
+            ["cars" => $cars, "makers" => $makers,
+            "models" => $models,
+            "years" => $years,
+            "cartypes" => $cartypes,
+            "fueltypes" => $fueltypes,
+            "states" => $states,
+            "cities" => $cities,
+            "mileages"=>$mileages
+            
+          ]
+        )->with("success","Cars Fetched Successfully");
+ }
+ else{
+    return view(
+            "car.search",
+            ["cars" => $cars,"makers" => $makers,
+            "models" => $models,
+            "years" => $years,
+            "cartypes" => $cartypes,
+            "fueltypes" => $fueltypes,
+            "states" => $states,
+            "cities" => $cities,
+            "mileages"=>$mileages
+            
+          ]
+        )->with("error","No cars found with the given data");
+ }     
+      
     }
+public function favourite(Request $request)
+{
+    $carId = $request->car_id_fav;
+    $userId = session('userid');
+
+    // Fetch the user
+    $user = User::find($userId);
+
+    if (!$user) {
+       return view("car.watchlist")->with("error","User not found");
+    }
+
+    // Add car to favourites (won't duplicate due to syncWithoutDetaching)
+    $user->favouredCars()->syncWithoutDetaching([$carId]);
+ $cars = User::find($userId)
+            ->favouredCars()
+            ->with(['primaryImage', 'city', 'carType', 'fuelType', 'maker', 'model'])
+            ->paginate(15);
+
+return view("car.watchlist", [
+    'success' => "Car added to watchlist",
+    'cars' => $cars
+]);
+   
+}
+
 
     public function watchlist()
     {

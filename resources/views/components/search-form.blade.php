@@ -60,7 +60,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div>
+                <!-- <div>
                    
                                     <select  name="year">
                                    <option value="">Year</option>
@@ -70,7 +70,7 @@
                                   
                                             @endforeach
                                     </select>
-                </div>
+                </div> -->
                
                 <div>
                     <select name="fuel_type_id">
@@ -81,7 +81,39 @@
                         @endforeach
                     </select>
                 </div>
-            </div>
+                
+                                       
+                                        <div>
+                                             <select  name="year_from">
+                                   <option value="">Year From</option>
+                                 
+                                            @foreach ($years as $year)
+                                        <option value={{$year}}>{{$year}}</option>
+                                  
+                                            @endforeach
+                                    </select>
+                                    </div>
+                                    <div>
+                                         <select  name="year_to">
+                                   <option value="">Year To</option>
+                                 
+                                            @foreach ($years as $year)
+                                        <option value={{$year}}>{{$year}}</option>
+                                  
+                                            @endforeach
+                                    </select>
+                                    </div>
+                                    
+                                       
+                                        <div>
+                                            <input type="number" placeholder="Price From" name="price_from" />
+                                            </div>
+                                            <div>
+                                            <input type="number" placeholder="Price To" name="price_to" />
+                                        </div>
+                                       
+                                       
+           
             <div class="flex-col">
                <input type="reset" value="Reset" class="reset_btn" style="width:84px;background-color: #e9580c;color:white">
                
