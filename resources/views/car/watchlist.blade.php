@@ -1,4 +1,5 @@
-<x-app-layout title="Show Watchlist Page">
+@props(['car', 'isInwatchlist' => false,'favouriteCarIds'=>[],'watchlisted'=>true])
+<x-app-layout title="Show Watchlist Page" >
     <main>
         <!-- New Cars -->
         <section>
@@ -18,8 +19,12 @@
                 <div class="car-items-listing">
                
               @foreach ($cars as $car)
-                  <x-car-item :$car :isInwatchlist="true"/>
+                  <x-car-item :$car :isInwatchlist="true" :$watchlisted/>
               @endforeach
+
+              @if ($cars->total() == 0)
+                  <p class="text-center">No cars added to watchlist</p>
+              @endif
     </div>
                 {{$cars->onEachSide(1)->links()}}
             </div>

@@ -13,6 +13,7 @@ Route::get("/signup", [SignUpController::class, "signup"])->name("signup");
 Route::get("/login", [LoginController::class, "login"])->name("login");
 Route::get("logout", [LoginController::class, "logout"])->name("logout");
 Route::get("/reset", [LoginController::class, "reset"])->name("password.reset");
+Route::put("/passwordedit", [LoginController::class, "passwordedit"])->name("password.edit");
 Route::post("/login", [LoginController::class, "loginpost"])->name("login.post");
 Route::post("/register", [SignUpController::class, "registeruser"])->name("register");
 Route::get("/", [HomeController::class, "index"])->name("home.index");
@@ -34,7 +35,7 @@ Route::middleware(["auth"])->group(
     Route::delete("/car/delete/{car}", [CarController::class, "delete"])->name("car.delete");
     // we need to put this route before resource because in car controller resource crud in case of edit show 
     // the route will look same car/{car} so it will execure the above route as show route
-     Route::post("/car/favourite", [CarController::class, "favourite"])->name("cars.favourite");
+     Route::post("/car/addtowatchlist", [CarController::class, "addtowatchlist"])->name("cars.addtowatchlist");
     Route::get("/car/watchlist", [CarController::class, "watchlist"])->name("car.watchlist");
     Route::resource("car", CarController::class);
   }

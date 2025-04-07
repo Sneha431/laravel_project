@@ -1,7 +1,7 @@
 <x-app-layout title="Search Car Page">
 
     <main>
-        @if(Session::has('success'))
+        <!-- @if(Session::has('success'))
 
     <div class="container my-large">
     <div class="success-message">{{Session::get('success')}}</div>
@@ -11,7 +11,7 @@
     <div class="container my-large">
     <div class="error-message">{{Session::get('error')}}</div>
     </div>
-  @endif
+  @endif -->
         <!-- Found Cars -->
         <section>
             <div class="container">
@@ -187,6 +187,9 @@
                            @foreach ($cars as $car)
                                <x-car-item  :$car/>
                            @endforeach
+                            @if ($cars->total() == 0)
+                  <p class="text-center">No cars found with the criteria.</p>
+              @endif
                         </div>
                         {{-- {{$cars->links('pagination')}} --}}
                         {{$cars->onEachSide(1)->links()}}

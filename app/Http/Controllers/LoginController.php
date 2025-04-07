@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -30,6 +31,34 @@ class LoginController extends Controller
             return redirect()->intended(route("home.index"));
         }
         return redirect(to: "login")->with("error", "Invalid email or password");
+    }
+        public function passwordedit(Request $request)
+    {
+      
+
+      
+       
+
+     
+         $validator = Validator::make(
+            $request->all(),
+            [
+            "email" => "required|email",
+                "password" => [
+                    "required",
+                    "min:8",
+                    "regex:/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_]).+$/"
+                ]
+        ],[]
+            ,[]
+        );
+
+       if ($validator->fails()) {
+       return redirect()->route("password.edit")->withInput()->withErrors($validator);
+        //  return redirect(route("signup"))->withInput()->with("error", $validator->errors());
+        }
+        User::where("email", $request->email)->update(["password"=>Hash::make($request->password)]);
+        return redirect(to: "passwordedit")->with("error", "Invalid email or password");
     }
     public function logout()
     {

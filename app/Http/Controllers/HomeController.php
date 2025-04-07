@@ -42,13 +42,19 @@ class HomeController extends Controller
         // if (!Auth::check()) {
         //     return redirect()->route("login");
         // }
+        $userId = session('userid');
+       $user = User::find($userId);
+      
+$favouriteCarIds = $user ? $user->favouredCars()->pluck('cars.id')->toArray() : [];
+
         return view("home.index", ["cars" => $cars,  "makers" => $makers,
             "models" => $models,
             "years" => $years,
             "cartypes" => $cartypes,
             "fueltypes" => $fueltypes,
             "states" => $states,
-            "cities" => $cities,]);
+            "cities" => $cities,
+        "favouriteCarIds"=>$favouriteCarIds]);
 
 
        

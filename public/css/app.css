@@ -1242,12 +1242,41 @@ a.pagination-item:hover {
   border-radius: 6px;
   background-color: #03ac4f;
   color: white;
+   max-width: 1200px;
+  margin: 0 auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+
 }
 .error-message {
-  padding: 0.75rem 1.25rem;
+    padding: 0.75rem 1.25rem;
+   max-width: 1200px;
+  margin: 0 auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+ 
   border-radius: 6px;
   background-color: #e91d1d;
   color: white;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+
+}
+.error-message,.success-message {
+  animation: hideMe 3s forwards;
+}
+
+@keyframes hideMe {
+  0% {
+    opacity: 1;
+    display: block;
+  }
+  100% {
+    opacity: 0;
+   display: none;
+  }
 }
 
 

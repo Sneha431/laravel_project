@@ -80,6 +80,10 @@ You don't have any cars yet. <a href="{{route('car.create')}}">Add new car</a>
                               
                             </tbody>
                         </table>
+
+                         @if ($cars->total() == 0)
+                  <p class="text-center">No cars added.</p>
+              @endif
                     </div>
     
                     {{$cars->onEachSide(1)->links()}}

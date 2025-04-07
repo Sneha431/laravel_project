@@ -11,6 +11,18 @@
             <div class="error-message">{{Session::get('error')}}</div>
         </div>
     @endif
+     @if($errors->any())
+ <div class="container my-large">
+    <div class="error-message"> 
+      <ul>
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+      </div>
+    </div>
+  
+@endif
     <main>
         <div class="container-small page-login">
             <div class="flex" style="gap: 5rem">

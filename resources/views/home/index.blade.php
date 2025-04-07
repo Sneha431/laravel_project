@@ -20,7 +20,7 @@
                                     Type, etc...
                                 </p>
         
-                                <button class="btn btn-hero-slider">Find the car</button>
+                                <button class="btn btn-hero-slider"><a href="#searchcar" style="text-decoration:none;color:white">Find the car</a></button>
                             </div>
                         </div>
                         <div class="slide-image">
@@ -42,7 +42,7 @@
                                     upload photos and the perfect buyer will find it...
                                 </p>
         
-                                <button class="btn btn-hero-slider">Add Your Car</button>
+                                <button class="btn btn-hero-slider"><a href="{{ route("car.create") }}" style="text-decoration:none;color:white">Add Your Car</a></button>
                             </div>
                         </div>
                         <div class="slide-image">
@@ -69,10 +69,10 @@
             </div>
         </section>
         <!--/ Home Slider -->
-        <main>
+        <main id="searchcar">
             <!--/ Find a car form -->
        
-           <x-search-form
+           <x-search-form 
     action="/search"
     :cars="$cars"
     :makers="$makers"
@@ -85,11 +85,12 @@
 />
   <!-- New Cars -->
             <section>
-                <div class="container">
+                <div class="container" id="latestcar">
                     <h2>Latest Added Cars</h2>
                     <div class="car-items-listing">
                        @foreach ($cars as $car )
-                            <x-car-item :$car/>
+
+                            <x-car-item :$car :$favouriteCarIds/>
                        @endforeach
                           
                      

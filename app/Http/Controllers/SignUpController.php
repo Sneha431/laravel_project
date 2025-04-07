@@ -40,11 +40,17 @@ class SignUpController extends Controller
                     "required",
                     "digits:9"
                 ]
+                ],[]
+            ,[
+                "fname"=>"First Name",
+                 "lname"=>"Last Name",
+                  "phone"=>"Phone Number",
             ]
         );
 
-        if ($validator->fails()) {
-            dd($validator->errors()->all()); // Dumps all validation error messages
+       if ($validator->fails()) {
+       return redirect()->route("signup")->withInput()->withErrors($validator);
+        //  return redirect(route("signup"))->withInput()->with("error", $validator->errors());
         }
 
         $user = new User();

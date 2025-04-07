@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use App\Models\Car;
 use App\Models\CarFeatures;
@@ -626,6 +627,7 @@ $makers = Maker::with('models')->get();
     
 if ($cars->isNotEmpty())
  {
+    session()->flash('success', 'Cars Fetched Successfully');
     return view(
             "car.search",
             ["cars" => $cars, "makers" => $makers,
@@ -638,9 +640,10 @@ if ($cars->isNotEmpty())
             "mileages"=>$mileages
             
           ]
-        )->with("success","Cars Fetched Successfully");
+    );
  }
  else{
+     session()->flash("error","No cars found with the given data");
     return view(
             "car.search",
             ["cars" => $cars,"makers" => $makers,
@@ -653,11 +656,11 @@ if ($cars->isNotEmpty())
             "mileages"=>$mileages
             
           ]
-        )->with("error","No cars found with the given data");
+        );
  }     
       
     }
-public function favourite(Request $request)
+public function addtowatchlist(Request $request)
 {
     $carId = $request->car_id_fav;
     $userId = session('userid');
@@ -666,22 +669,45 @@ public function favourite(Request $request)
     $user = User::find($userId);
 
     if (!$user) {
-       return view("car.watchlist")->with("error","User not found");
+        session()->flash('error', 'User value: not found');
+       return view("car.watchlist");
     }
 
-    // Add car to favourites (won't duplicate due to syncWithoutDetaching)
+    $exists= $user->favouredCars()->where('car_id', $carId)->exists();
+
+    if($exists)
+    {
+        session()->flash('success', 'Car removed from watchlist');
+          $user->favouredCars()->detach([$carId]);
+    }
+else{
+ // Add car to favourites (won't duplicate due to syncWithoutDetaching)
+ session()->flash('success', 'Car added to watchlist');
     $user->favouredCars()->syncWithoutDetaching([$carId]);
+}
+   
  $cars = User::find($userId)
             ->favouredCars()
             ->with(['primaryImage', 'city', 'carType', 'fuelType', 'maker', 'model'])
             ->paginate(15);
+            return view("car.watchlist", [
+        'cars' => $cars
+    ]);
+// $prevurl = url()->previous();
 
-return view("car.watchlist", [
-    'success' => "Car added to watchlist",
-    'cars' => $cars
-]);
+// if (Str::is(url('/'), $prevurl)) {
+//     return redirect()->route("home.index", [
+//         'cars' => $cars
+//     ]);
+// } elseif (Str::contains($prevurl, '/car/watchlist')) {
+//     return view("car.watchlist", [
+//         'cars' => $cars
+//     ]);
+// }
+    }
+
    
-}
+
 
 
     public function watchlist()
@@ -692,6 +718,6 @@ return view("car.watchlist", [
             ->with(['primaryImage', 'city', 'carType', 'fuelType', 'maker', 'model'])
             ->paginate(15);
         //->get();
-        return view("car.watchlist", ["cars" => $cars]);
+        return view("car.watchlist", ["cars" => $cars,"watchlisted"=>true]);
     }
 }

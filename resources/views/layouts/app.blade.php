@@ -1,17 +1,21 @@
 @props(["title" => "", "footerLinks" => "", "bodyClass" => null])
+
 {{-- <x-base-layout :title="$title"> --}}
   <x-base-layout :$title :$bodyClass>
+   
 <x-layouts.header></x-layouts.header>
-  @if(Session::has('success'))
+@if (url()->current()!== url('http://127.0.0.1:8000'))
+ @if(Session::has('success'))
 
-    <div class="container my-large">
+    
     <div class="success-message">{{Session::get('success')}}</div>
-    </div>
+   
 
   @elseif(Session::has('error'))
-    <div class="container my-large">
+  
     <div class="error-message">{{Session::get('error')}}</div>
-    </div>
+  
+  @endif
   @endif
 {{$slot}}
 {{-- <footer>
