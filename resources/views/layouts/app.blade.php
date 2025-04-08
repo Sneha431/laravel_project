@@ -23,5 +23,5 @@
   <a href="#">Link 2</a>
   {{$footerLinks}}
 </footer> --}}
-
+<x-layouts.footer></x-layouts.footer>
 </x-base-layout>
