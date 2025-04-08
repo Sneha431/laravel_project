@@ -1265,7 +1265,7 @@ a.pagination-item:hover {
 
 }
 .error-message,.success-message {
-  animation: hideMe 3s forwards;
+  animation: hideMe 6s forwards;
 }
 
 @keyframes hideMe {

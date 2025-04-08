@@ -13,7 +13,7 @@ Route::get("/signup", [SignUpController::class, "signup"])->name("signup");
 Route::get("/login", [LoginController::class, "login"])->name("login");
 Route::get("logout", [LoginController::class, "logout"])->name("logout");
 Route::get("/reset", [LoginController::class, "reset"])->name("password.reset");
-Route::put("/passwordedit", [LoginController::class, "passwordedit"])->name("password.edit");
+Route::put("/password/edit", [LoginController::class, "passwordedit"])->name("password.edit");
 Route::post("/login", [LoginController::class, "loginpost"])->name("login.post");
 Route::post("/register", [SignUpController::class, "registeruser"])->name("register");
 Route::get("/", [HomeController::class, "index"])->name("home.index");

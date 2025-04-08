@@ -37,7 +37,7 @@ class LoginController extends Controller
       
 
       
-       
+      
 
      
          $validator = Validator::make(
@@ -58,7 +58,7 @@ class LoginController extends Controller
         //  return redirect(route("signup"))->withInput()->with("error", $validator->errors());
         }
         User::where("email", $request->email)->update(["password"=>Hash::make($request->password)]);
-        return redirect(to: "passwordedit")->with("error", "Invalid email or password");
+       return redirect()->route("password.reset")->with("success", "Password is reset. Go to login and try again");
     }
     public function logout()
     {
